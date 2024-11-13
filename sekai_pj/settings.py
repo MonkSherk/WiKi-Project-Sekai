@@ -49,8 +49,8 @@ INSTALLED_APPS = [
     'bootstrap5',
 ]
 
-ADMIN_TOKEN = 'I love niggers and dicks'
-SECRET_WORD = 'япидор'
+ADMIN_TOKEN = # your realization of token
+SECRET_WORD = # your Secret word
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
