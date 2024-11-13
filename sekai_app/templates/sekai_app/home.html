@@ -1,0 +1,274 @@
+{% extends 'sekai_app/base.html' %}
+{% block title %}Project SEKAI Wiki - Home{% endblock %}
+
+{% block content %}
+    {% load slicer %}
+    <div class="container mt-4">
+        <div class="welcome-container p-4 bg-light rounded shadow mb-5">
+            <div class="text-center">
+                <h1 class="text-info">Добро пожаловать на WiKi сайт по Project Sekai!</h1>
+                <p>Изучите мир Project Sekai благодаря нашему сайту!</p>
+            </div>
+
+            <nav class="mt-3">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#popular-characters">Популярные Персонажи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#active-events">Действующие Ивенты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#game-mechanics">Механики Игры</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div id="popular-characters" class="p-4 bg-white rounded shadow mb-5">
+            <h2 class="text-info">Популярные персонажи</h2>
+            <div id="charactersCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for slice in popular_characters|slice_list:3 %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                            {% for character in slice %}
+                            <div class="col-md-4">
+                                <div class="card mb-4">
+                                    <img src="{{ character.image.url }}" class="card-img-top" alt="{{ character.name }}" loading="lazy">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ character.name }}</h5>
+                                        <p class="card-text">{{ character.description|truncatewords:20 }}</p>
+                                        <a href="{% url 'character_detail' character.pk %}" class="btn btn-primary">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#charactersCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Предыдущий</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#charactersCarousel" data-bs-slide="next" aria-label="Следующий">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Следующий</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="active-events" class="p-4 bg-white rounded shadow mb-5">
+            <h2 class="text-info">Действующие ивенты</h2>
+            <div id="eventsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for slice in active_events|slice_list:3 %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="row">
+                            {% for event in slice %}
+                            <div class="col-md-4">
+                                <div class="card mb-4">
+                                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" loading="lazy">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ event.name }}</h5>
+                                        <p class="card-text">{{ event.description|truncatewords:20 }}</p>
+                                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary">Подробнее</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Предыдущий</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next" aria-label="Следующий">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Следующий</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="game-mechanics" class="p-4 bg-white rounded shadow mb-5">
+            <h2 class="text-info">Механики Игры</h2>
+            <div class="row">
+                {% for game in games %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video controls preload="metadata" class="card-img-top" style="max-height: 250px;" loading="lazy">
+                                <source src="{{ game.video.url }}" type="video/mp4">
+                                Ваш браузер не поддерживает тег видео.
+                            </video>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ game.name }}</h5>
+                            <p class="card-text">{{ game.description|truncatewords:30 }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <h3 class="mt-5 text-info">FAQю</h3>
+            <div class="accordion" id="gameMechanicsFAQ">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingHealthLevel">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealthLevel" aria-expanded="false" aria-controls="collapseHealthLevel">
+                            Как работает уровень здоровья в игре?
+                        </button>
+                    </h2>
+                    <div id="collapseHealthLevel" class="accordion-collapse collapse" aria-labelledby="headingHealthLevel" data-bs-parent="#gameMechanicsFAQ">
+                        <div class="accordion-body">
+                            В начале каждой игры вам дается <strong>1000 очков здоровья</strong>, которые будут сниматься при пропускании ноты или позднем нажатии на неё.
+                            Здоровье может восстановиться при наличии специальной карточки персонажа в вашей команде.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingNoteTypes">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNoteTypes" aria-expanded="false" aria-controls="collapseNoteTypes">
+                            Какие существуют типы нажатия нот и как они влияют на здоровье?
+                        </button>
+                    </h2>
+                    <div id="collapseNoteTypes" class="accordion-collapse collapse" aria-labelledby="headingNoteTypes" data-bs-parent="#gameMechanicsFAQ">
+                        <div class="accordion-body">
+                            Существуют следующие типы нажатия нот: <strong>Perfect</strong>, <strong>Nice</strong>, <strong>Good</strong>, <strong>Bad</strong>. При получении <strong>Bad</strong> здоровье снижается на <strong>50 очков</strong>, при пропускании ноты — на <strong>100 очков</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            border: 2px solid #0d6efd;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            position: relative;
+            z-index: 1;
+            background-color: #ffffff;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
+            border-color: #0d6efd;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(45deg, #0d6efd, #00fffc, #ff00f6, #ffea00, #0d6efd);
+            background-size: 400%;
+            z-index: -1;
+            border-radius: 15px;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+        }
+        .card:hover::before {
+            animation: neonGlow 3s linear infinite;
+            opacity: 1;
+        }
+
+        @keyframes neonGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-height: 250px;
+        }
+
+        @media (min-width: 768px) {
+            .carousel-item .row {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+
+        .welcome-container {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul.nav {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        nav ul.nav li.nav-item {
+            margin: 0 15px;
+        }
+        nav ul.nav li.nav-item a.nav-link {
+            color: #0d6efd;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        nav ul.nav li.nav-item a.nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-size: 30px 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            padding: 10px;
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+        }
+
+        /* Стили для аккордеона FAQ */
+        .accordion-button::after {
+            background-image: none;
+        }
+        .accordion-button.collapsed::after {
+            background-image: none;
+        }
+        .accordion-button {
+            font-weight: bold;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

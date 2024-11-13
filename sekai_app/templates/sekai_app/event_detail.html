@@ -1,0 +1,244 @@
+{% extends 'sekai_app/base.html' %}
+{% load static %}
+{% load slicer %}  <!-- Если требуется для использования тега slice_list -->
+
+{% block title %}Project SEKAI Wiki - {{ event.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card bg-dark text-white shadow-lg border-0 rounded-3 mb-4">
+        {% if event.image %}
+          <img src="{{ event.image.url }}" class="card-img-top rounded-top-3" alt="{{ event.name }}">
+        {% else %}
+            <p>No Image</p>
+        {% endif %}
+        <div class="card-body">
+          <h1 class="card-title text-primary fw-bold">{{ event.name }}</h1>
+          <p class="card-text">{{ event.description }}</p>
+          {% if event.group %}
+            <p><strong>Группа:</strong> <a href="{% url 'group_detail' event.group.pk %}" class="text-info">{{ event.group.name }}</a></p>
+          {% endif %}
+          <p><strong>Начало Ивента:</strong> {{ event.start_date }}</p>
+          <p><strong>Ивент Завершен:</strong> {{ event.is_ended|yesno:"Да,Нет" }}</p>
+        </div>
+      </div>
+
+      <div class="character-cards-container p-3 rounded-3 shadow-lg mb-4">
+        <h3 class="text-primary">Карточки вышедшие в этот ивент</h3>
+        {% if event.character_cards.exists %}
+          <div id="characterCardsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for slice in event.character_cards.all|slice_list:3 %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                  <div class="row">
+                    {% for card in slice %}
+                      <div class="col-md-4">
+                        <div class="card mb-4">
+                          <a href="{% url 'card_detail' card.pk %}" class="text-decoration-none text-white">
+                            {% if card.image_url %}
+                              <img src="{{ card.image_url.url }}" class="card-img-top rounded-top-3" alt="{{ card.name }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <p>No Image</p>
+                            {% endif %}
+                            <div class="card-body">
+                              <h5 class="card-title text-info">{{ card.name }}</h5>
+                              <p class="card-text"><strong>Редкость:</strong> {{ card.rarity }}</p>
+                              <p class="card-text"><strong>Статы:</strong> {{ card.stats|truncatewords:10 }}</p>
+                              {% if card.is_limited %}
+                                <span class="badge bg-warning text-dark">Limited</span>
+                              {% endif %}
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#characterCardsCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#characterCardsCarousel" data-bs-slide="next" aria-label="Следующий">
+              <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Следующий</span>
+            </button>
+          </div>
+        {% else %}
+          <p class="text-muted">Нет привязанных карточек персонажей.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="related-container p-3 rounded-3">
+        {% if event.group %}
+          <h3 class="text-primary">Связанная группа</h3>
+          <div class="card bg-transparent text-white border-0 shadow-none rounded-3 mb-3">
+            <a href="{% url 'group_detail' event.group.pk %}" class="text-decoration-none">
+              {% if event.group.image %}
+                <img src="{{ event.group.image.url }}" class="card-img-top rounded-top-3" alt="{{ event.group.name }}">
+              {% else %}
+                  <p>No Image</p>
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title text-info">{{ event.group.name }}</h5>
+              </div>
+            </a>
+          </div>
+        {% endif %}
+
+        {% if event.character.exists %}
+          <h3 class="text-primary">Участвовавшие персонажи</h3>
+          <div class="participants-container p-3 rounded-3 shadow-lg mb-4">
+            <div class="d-flex flex-column gap-3">
+              {% for character in event.character.all %}
+                <div class="character-card d-flex align-items-center rounded-3 p-2 shadow-sm">
+                  <div class="character-image rounded-circle overflow-hidden me-3">
+                    {% if character.image %}
+                      <img src="{{ character.image.url }}" alt="{{ character.name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                    {% else %}
+                        <p>No Image</p>
+                    {% endif %}
+                  </div>
+                  <div class="character-info">
+                    <h5 class="mb-0"><a href="{% url 'character_detail' character.pk %}" class="text-info text-decoration-none">{{ character.name }}</a></h5>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <p class="text-muted">Нет связанных персонажей.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .related-container {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .related-container .card {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+    .related-container .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .related-container .card-img-top {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      max-height: 200px;
+    }
+    .participants-container {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .character-card {
+      background-color: #4e5d6c;
+      transition: transform 0.2s, box-shadow 0.2s;
+      padding: 10px;
+    }
+
+    .character-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .character-image {
+      width: 60px;
+      height: 60px;
+      overflow: hidden;
+    }
+
+    .character-image img {
+      border-radius: 50%;
+    }
+    .character-cards-container {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    #characterCardsCarousel .carousel-item .row {
+      display: flex;
+      justify-content: center;
+    }
+
+    #characterCardsCarousel .card {
+      background-color: #333;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #characterCardsCarousel .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    #characterCardsCarousel .card-body {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .card {
+      border: 2px solid #0d6efd;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      z-index: 1;
+      background-color: #ffffff;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
+      border-color: #0d6efd;
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      max-height: 250px;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 1400px;
+      }
+
+      #characterCardsCarousel .carousel-item .row .card {
+        max-width: 300px;
+      }
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-size: 30px 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      padding: 10px;
+    }
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 5%;
+    }
+  </style>
+</div>
+{% endblock %}

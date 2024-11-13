@@ -1,0 +1,67 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Админка - Главная{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Панель Администратора</h1>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Миры</h5>
+                <a href="{% url 'admin_sekai_world_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Карточки</h5>
+                <a href="{% url 'admin_card_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Музыка</h5>
+                <a href="{% url 'admin_song_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Персонажи</h5>
+                <a href="{% url 'admin_character_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Ивенты</h5>
+                <a href="{% url 'admin_event_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Группы</h5>
+                <a href="{% url 'admin_group_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Предметы Миров</h5>
+                <a href="{% url 'admin_sekai_items_list' %}" class="btn btn-primary">Управлять</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

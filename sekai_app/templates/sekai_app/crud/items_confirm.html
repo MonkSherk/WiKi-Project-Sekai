@@ -1,0 +1,16 @@
+
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Админка - Удалить предмет{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 bg-light text-dark rounded-3 shadow-lg">
+        <h2 class="text-center text-danger mb-4">Удалить Предмет</h2>
+        <p class="text-center">Вы уверены, что хотите удалить предмет <strong>{{ item.name }}</strong>?</p>
+        <form method="post" class="d-flex justify-content-center">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger me-2">Да, удалить</button>
+            <a href="{% url 'admin_sekai_items_list' %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

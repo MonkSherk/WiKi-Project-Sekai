@@ -1,0 +1,32 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Админка - Песни{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Управление Песнями</h1>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'song_create' %}" class="btn btn-success">Добавить Песню</a>
+</div>
+<div class="row">
+    {% for song in songs %}
+    <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+            <img src="{{ song.image.url }}" class="card-img-top" alt="{{ song.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ song.name }}</h5>
+                <p class="card-text"><strong>Artist:</strong> {{ song.artist }}</p>
+                <p class="card-text"><strong>Genre:</strong> {{ song.genre }}</p>
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'song_update' song.pk %}" class="btn btn-warning btn-sm">Обновить</a>
+                    <form method="post" action="{% url 'song_delete' song.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">Нет доступных песен.</p>
+    {% endfor %}
+</div>
+{% endblock %}

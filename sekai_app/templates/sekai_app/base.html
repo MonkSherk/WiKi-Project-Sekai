@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}Project SEKAI Wiki{% endblock %}</title>
+    <link rel="website icon" type="png" href="{% static 'images/icons8-аниме-48.png' %}">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" href="{% static 'sekai_app/styles.css' %}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap&subset=cyrillic" rel="stylesheet">
+
+    <style>
+        body {
+            {% block body_style %}
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            {% endblock %}
+            font-family: 'Russo One', sans-serif;
+            color: #333333;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .nav-link {
+            font-family: 'Russo One', sans-serif;
+            color: #333333;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        .multicolor-text {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #333333;
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-link {
+            color: #333333 !important;
+        }
+
+        .nav-link.active {
+            color: #007bff !important;
+            font-weight: bold;
+        }
+
+        .card {
+            margin: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%;
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+        }
+
+        .card-deck .card {
+            flex: 1 1 calc(33.333% - 30px);
+        }
+
+        .card-deck {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: -15px;
+        }
+        @media (max-width: 768px) {
+            .card-deck .card {
+                flex: 1 1 calc(50% - 30px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .card-deck .card {
+                flex: 1 1 100%;
+            }
+        }
+
+        .carousel-card {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .carousel-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .carousel-card .card-body {
+            text-align: center;
+        }
+
+        /* Стили для Owl Carousel */
+        .owl-carousel .item {
+            text-align: center;
+        }
+
+        .owl-nav {
+            display: none;
+        }
+
+        .bg-white {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand multicolor-text" href="#">Project SEKAI Wiki</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+                <span class="navbar-toggler-icon">&#127385;</span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">🏠 Дом</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sekai_world_list' %}">🌍 SEKAI Миры</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'group_list' %}">👥 Группы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'character_list' %}">🎭 Персонажи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'card_list' %}">🃏 Карточки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'song_list' %}">🎶 Музыка</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'event_list' %}">📅 Ивенты</a>
+                    </li>
+                    <li class="nav-item" id="admin-link" style="display: none;">
+                        <a class="nav-link" href="{% url 'admin_access_check' %}">🔑 Администрирование</a>
+                    </li>
+                    <li class="nav-item" id="Adult" style="display: none">
+                        <a class="nav-link" href="https://youtu.be/_LHuObCgHj8?si=rgY6vFGirCFpLX8Z">🔞 Взрослые контенты</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentLocation = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentLocation) {
+                    link.classList.add('active');
+                }
+            });
+
+            let keysPressed = {};
+
+            function handleKeyDown(event) {
+                keysPressed[event.key] = true;
+                // CTRL + SHIFT + A
+                if (keysPressed['Control'] && keysPressed['Shift'] && event.key === 'A') {
+                    document.getElementById('admin-link').style.display = 'block';
+                }
+
+                // CTRL + SHIFT + P
+                if (keysPressed['Control'] && keysPressed['Shift'] && event.key === 'P') {
+                    document.getElementById('Adult').style.display = 'block';
+                }
+            }
+
+            function handleKeyUp(event) {
+                delete keysPressed[event.key];
+            }
+
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+        });
+    </script>
+</body>
+</html>

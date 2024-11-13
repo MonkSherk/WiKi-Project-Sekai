@@ -1,0 +1,16 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Project SEKAI Wiki - Создание/Редактирование персонажа{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">
+    {{ form.instance.pk|yesno:"Редактировать персонажа,Создать персонажа" }}
+  </h2>
+  <form method="post" enctype="multipart/form-data" class="shadow-lg p-4 bg-light text-dark rounded-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary w-100">
+      {{ form.instance.pk|yesno:"Обновить,Создать" }}
+    </button>
+  </form>
+</div>
+{% endblock %}

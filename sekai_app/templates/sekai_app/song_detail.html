@@ -1,0 +1,232 @@
+{% extends 'sekai_app/base.html' %}
+{% load youtube_tags %}
+{% load slicer %}
+{% load static %}
+
+{% block title %}Project SEKAI Wiki - {{ song.name }}{% endblock %}
+
+{% block head_extra %}
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block body_style %}
+    {% if song.background_image %}
+        background-image: url("{{ song.background_image.url }}");
+    {% else %}
+        background-color: #121212;
+    {% endif %}
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/css/green-audio-player.min.css">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card bg-dark text-white shadow-lg border-0 rounded-3 mb-4">
+        {% if song.image %}
+          <img src="{{ song.image.url }}" class="card-img-top rounded-top-3" alt="{{ song.name }}" loading="lazy">
+        {% endif %}
+        <div class="card-body">
+          <h1 class="card-title text-primary fw-bold">{{ song.name }}</h1>
+          <p class="card-text">
+            <strong>Жанр:</strong> {{ song.get_genre_display }}
+          </p>
+          {% if song.group %}
+            <p class="card-text">
+              <strong>Группа:</strong>
+              <a href="{% url 'group_detail' song.group.pk %}" class="text-info">{{ song.group.name }}</a>
+            </p>
+          {% endif %}
+          {% if song.song_url %}
+            <h4 class="mt-4 text-info">Слушать песню</h4>
+            <div class="d-flex justify-content-center ">
+              <div class="green-audio-player">
+                  <audio>
+                      <source src="{{ song.song_url.url }}" type="audio/mpeg">
+                  </audio>
+              </div>
+            </div>
+          {% endif %}
+          {% if song.animation %}
+            <h4 class="mt-4 text-info">Анимация</h4>
+            <div class="ratio ratio-16x9">
+              <iframe src="https://www.youtube.com/embed/{{ song.animation|youtube_id }}" title="YouTube video player" allowfullscreen></iframe>
+            </div>
+          {% else %}
+            <p class="text-center">Анимация отсутствует.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="related-container p-3 rounded-3 shadow-lg mb-4">
+        <h4 class="text-center text-primary mb-4">Дополнительно</h4>
+
+        {% if song.group or song.get_artist %}
+          {% if song.group %}
+            <div class="mb-4">
+              <h5 class="text-center text-info">Группа</h5>
+              <div class="card bg-dark text-white border-0 rounded-3 mb-3 group-card">
+                <a href="{% url 'group_detail' song.group.pk %}" class="text-decoration-none text-white">
+                  {% if song.group.image %}
+                    <img src="{{ song.group.image.url }}" class="img-fluid rounded-top-3" alt="{{ song.group.name }}" loading="lazy">
+                  {% endif %}
+                  <div class="card-body">
+                    <h6 class="card-title text-info text-center">{{ song.group.name }}</h6>
+                  </div>
+                </a>
+              </div>
+            </div>
+          {% endif %}
+          {% if song.get_artist %}
+            <div>
+              <h5 class="text-center text-info">Участие принимали:</h5>
+              <div class="d-flex flex-column gap-3">
+                {% for artist in song.get_artist %}
+                  <div class="character-card d-flex align-items-center rounded-3 p-2 shadow-sm">
+                    <div class="character-image rounded-circle overflow-hidden me-3">
+                      {% if artist.image %}
+                        <img src="{{ artist.image.url }}" alt="{{ artist.name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                      {% else %}
+                          <p>No Image</p>
+                      {% endif %}
+                    </div>
+                    <div class="character-info">
+                      <h5 class="mb-0"><a href="{% url 'character_detail' artist.pk %}" class="text-info text-decoration-none">{{ artist.name }}</a></h5>
+                      {% if artist.role %}
+                        <p class="mb-0 fs-6">{{ artist.get_role_display }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="text-center">Связей с этой песни нету</p>
+        {% endif %}
+          <script src="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/js/green-audio-player.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            GreenAudioPlayer.init({
+                selector: '.green-audio-player',
+                stopOthersOnPlay: true,
+                showDownloadButton: true,
+                enableKeystrokes: true,
+                showTooltips: true,
+                showVolumeSlider: true,
+                showTimeElapsed: true,
+                showTimeRemaining: true,
+                showPlayPauseButton: true,
+                showPreviousTrackButton: true,
+            });
+        });
+    </script>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .related-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+  }
+
+  .group-card, .artist-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .group-card:hover, .artist-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .group-card .card-title {
+    text-align: center;
+  }
+
+  .character-card {
+    background-color: #4e5d6c;
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 10px;
+  }
+
+  .character-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .character-image {
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+  }
+
+  .character-image img {
+    border-radius: 50%;
+  }
+
+  .character-info a {
+    color: #0dcaf0;
+  }
+
+  .character-info a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .character-card {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .character-image {
+      width: 50px;
+      height: 50px;
+    }
+
+    .character-image img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .character-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .character-image {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+
+    .character-image img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  h3.text-primary, h4.text-info {
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

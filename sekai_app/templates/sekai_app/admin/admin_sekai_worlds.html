@@ -1,0 +1,38 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% load static %}
+{% block title %}Админка - Миры{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Управление Мирами</h1>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'sekai_world_create' %}" class="btn btn-success">Добавить Мир</a>
+</div>
+<div class="row">
+    {% for world in worlds %}
+    <div class="col-md-4 mb-4">
+        <div class="card bg-light h-100">
+            {% if world.image_url %}
+                <img src="{{ world.image_url.url }}" class="card-img-top" alt="{{ world.name }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <p>No Image provided</p>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ world.name }}</h5>
+                <p class="card-text">{{ world.description|truncatewords:15 }}</p>
+                <div class="mt-auto d-flex justify-content-between">
+                    <a href="{% url 'sekai_world_update' world.pk %}" class="btn btn-warning btn-sm">Обновить</a>
+                    <form method="post" action="{% url 'sekai_world_delete' world.pk %}" onsubmit="return confirm('Вы уверены, что хотите удалить этот мир?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-center">Нет доступных миров.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

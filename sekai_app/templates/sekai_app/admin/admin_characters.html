@@ -1,0 +1,31 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Админка - Персонажи{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Управление Персонажами</h1>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'character_create' %}" class="btn btn-success">Добавить Персонажа</a>
+</div>
+<div class="row">
+    {% for character in characters %}
+    <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+            <img src="{{ character.image.url }}" class="card-img-top" alt="{{ character.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ character.name }}</h5>
+                <p class="card-text">{{ character.description|truncatewords:15 }}</p>
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'character_update' character.pk %}" class="btn btn-warning btn-sm">Обновить</a>
+                    <form method="post" action="{% url 'character_delete' character.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">Нет доступных персонажей.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'sekai_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100 text-center"
+     style="background-color: #e6dfda; position: relative; overflow: hidden; cursor: pointer;"
+     onclick="window.location.href='{% url 'home' %}'">
+
+    <img src="{% static 'images/404.png' %}" alt="404 Background"
+         class="position-absolute w-100 h-100"
+         style="object-fit: cover; top: 0; left: 0; z-index: 1;">
+</div>
+{% endblock %}

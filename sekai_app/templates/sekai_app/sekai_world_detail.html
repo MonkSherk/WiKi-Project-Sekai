@@ -1,0 +1,197 @@
+{% extends 'sekai_app/base.html' %}
+
+{% load slicer static %}
+
+{% block title %}Project SEKAI Wiki - {{ sekai_world.name }}{% endblock %}
+
+{% block body_style %}
+    /* Общий задний фон страницы */
+    {% if sekai_world.background_image %}
+        background-image: url("{{ sekai_world.background_image.url }}");
+    {% else %}
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    {% endif %}
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card bg-dark text-white shadow-lg border-0 rounded-3 mb-4">
+                {% if sekai_world.image_url %}
+                    <img src="{{ sekai_world.image_url.url }}" class="card-img-top rounded-top-3" alt="{{ sekai_world.name }}">
+                {% else %}
+                    <p>No Image</p>
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title text-primary fw-bold">{{ sekai_world.name }}</h1>
+                    <p class="card-text">{{ sekai_world.description }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3 class="text-primary">Группа в {{ sekai_world.name }}</h3>
+            {% for group in sekai_world.groups.all %}
+                <div class="card bg-dark text-white border-0 shadow-lg rounded-3 mb-3">
+                    <a href="{% url 'group_detail' group.pk %}" class="text-white text-decoration-none">
+                        {% if group.image %}
+                            <img src="{{ group.image.url }}" class="card-img-top rounded-top-3" alt="{{ group.name }}">
+                        {% else %}
+                            <p>No Image</p>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title text-info">{{ group.name }}</h5>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-center">Нет групп в этом мире.</p>
+            {% endfor %}
+        </div>
+    </div>
+<div class="row mt-5">
+    <div class="col-12">
+        <div id="itemsContainer" class="p-4 bg-white rounded shadow">
+            <h2 class="text-info mb-4">Предметы в {{ sekai_world.name }}</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Изображение</th>
+                            <th>Предмет</th>
+                            <th>Эффект Предмета</th>
+                            <th>Персонаж</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in sekai_items %}
+                            <tr>
+                                <td class="text-center">
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 50px; height: auto;">
+                                    {% else %}
+                                        <span>Нет изображения</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.description }}</td>
+                                <td>
+                                    {% if item.character %}
+                                        <a href="{% url 'character_detail' item.character.pk %}" class="text-info text-decoration-none">{{ item.character.name }}</a>
+                                    {% else %}
+                                        <span>Не указано</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Нет предметов для отображения.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .sekai-item-card {
+            border: 2px solid #0d6efd;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.3s, border-color 0.3s;
+            animation: borderColorChange 6s infinite;
+            background-color: #1a1a1a;
+        }
+
+        .sekai-item-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: #0d6efd;
+        }
+
+        @keyframes borderColorChange {
+            0% {
+                border-color: rgb(255, 0, 0);
+            }
+            33% {
+                border-color: rgb(0, 255, 0);
+            }
+            66% {
+                border-color: rgb(0, 0, 255);
+            }
+            100% {
+                border-color: rgb(255, 0, 0);
+            }
+        }
+
+        #itemsContainer {
+            {% if sekai_world.items_background_image %}
+                background-image: url("{{ sekai_world.items_background_image.url }}");
+                background-size: cover;
+                background-repeat: no-repeat;
+            {% else %}
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            {% endif %}
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container-fluid {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .container-fluid {
+            overflow: hidden;
+        }
+
+        .character-image img {
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .sekai-item-card .card-img-top {
+                height: 120px;
+            }
+
+            .sekai-item-card .card-title {
+                font-size: 1rem;
+            }
+
+            .sekai-item-card .card-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sekai-item-card .card-img-top {
+                height: 100px;
+            }
+
+            .sekai-item-card .card-title {
+                font-size: 0.875rem;
+            }
+
+            .sekai-item-card .card-text {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

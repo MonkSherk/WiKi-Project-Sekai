@@ -1,0 +1,148 @@
+{% extends 'sekai_app/base.html' %}
+{% block title %}Project SEKAI Wiki - {{ character.name }}{% endblock %}
+{% load slicer %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-7">
+      <div class="card bg-dark text-white shadow-lg border-0 rounded-3 mb-4 character-card">
+        <div class="ratio ratio-1x1">
+          <img src="{{ character.image.url }}" class="img-fluid rounded-top-3" alt="{{ character.name }}" style="object-fit: cover;">
+        </div>
+        <div class="card-body">
+          <h1 class="card-title text-primary fw-bold">{{ character.name }}</h1>
+          <p class="card-text">{{ character.description }}</p>
+          <p><strong>Группа:</strong> <a href="{% url 'group_detail' character.group.pk %}" class="text-info">{{ character.group.name }}</a></p>
+          <p><strong>Тип Персонажа:</strong> {{ character.sekai_type }}</p>
+          <p><strong>Популярность:</strong> {{ character.is_popular|yesno:"Да,Нет" }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="music-container p-3 rounded-3 shadow-lg mb-4">
+        <h3 class="text-primary">Песни с участием {{ character.name }}</h3>
+        {% if songs %}
+          <div id="songsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for slice in songs|slice_list:2 %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="d-flex justify-content-center gap-3">
+                  {% for song in slice %}
+                  <div class="card bg-dark text-white border-0 shadow-lg rounded-3 music-item" style="width: 250px;">
+                    <a href="{% url 'song_detail' song.pk %}" class="text-decoration-none text-white">
+                      {% if song.image %}
+                        <img src="{{ song.image.url }}" class="card-img-top rounded-top-3" alt="{{ song.name }}" style="height: 200px; object-fit: cover;">
+                      {% endif %}
+                      <div class="card-body">
+                        <h5 class="card-title text-info">{{ song.name }}</h5>
+                        {% if song.genre %}
+                          <p class="card-text"><strong>Жанр:</strong> {{ song.get_genre_display }}</p>
+                        {% endif %}
+                        {% if song.release_date %}
+                          <p class="card-text"><strong>Дата релиза:</strong> {{ song.release_date }}</p>
+                        {% endif %}
+                        {% if song.song_url %}
+                            <div class="green-audio-player">
+                          <audio controls style="width: 100%;">
+                            <source src="{{ song.song_url.url }}" type="audio/mpeg">
+                          </audio>
+                            </div>
+                        {% endif %}
+                      </div>
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#songsCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#songsCarousel" data-bs-slide="next" aria-label="Следующий">
+              <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Следующий</span>
+            </button>
+          </div>
+        {% else %}
+          <p class="text-center">Этот персонаж не участвовал в песнях.</p>
+        {% endif %}
+      </div>
+
+      <div class="cards-container p-3 rounded-3 shadow-lg">
+        <h3 class="text-primary">Карточки {{ character.name }}</h3>
+        {% if cards %}
+          <div id="cardsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for slice in cards|slice_list:2 %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="d-flex justify-content-center gap-3">
+                  {% for card in slice %}
+                  <div class="card bg-dark text-white border-0 shadow-lg rounded-3" style="width: 300px;">
+                    <a href="{% url 'card_detail' card.pk %}" class="text-decoration-none text-white">
+                      {% if card.image_url %}
+                        <img src="{{ card.image_url.url }}" class="card-img-top rounded-top-3" alt="{{ character.name }} Card" style="height: 180px; object-fit: cover; margin-bottom: 10px;">
+                      {% endif %}
+                      <div class="card-body">
+                        <h5 class="card-title text-info">{{ card.rarity }} - Уровень {{ card.level }}</h5>
+                        {% if card.is_limited %}
+                          <span class="badge bg-danger">Лимитированная</span>
+                        {% endif %}
+                      </div>
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#cardsCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#cardsCarousel" data-bs-slide="next" aria-label="Следующий">
+              <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+              <span class="visually-hidden">Следующий</span>
+            </button>
+          </div>
+        {% else %}
+          <p class="text-center">У этого персонажа нет карточек.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .music-container, .cards-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .music-item, .card.bg-dark.text-white {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .music-item:hover, .card.bg-dark.text-white:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-img-top {
+    object-fit: cover;
+  }
+
+  .cards-container .card-img-top {
+    height: 180px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+
+  h3.text-primary {
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}

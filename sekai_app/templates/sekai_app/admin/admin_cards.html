@@ -1,0 +1,34 @@
+{% extends 'sekai_app/admin/admin_base.html' %}
+{% block title %}Админка - Карточки{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Управление Карточками</h1>
+<div class="d-flex justify-content-between mb-3">
+    <a href="{% url 'card_create' %}" class="btn btn-success">Добавить Карточку</a>
+</div>
+<div class="row">
+    {% for card in cards %}
+    <div class="col-md-4 mb-4">
+        <div class="card bg-light">
+            {% if card.image_url %}
+                <img src="{{ card.image_url.url }}" class="card-img-top" alt="{{ card.character.name }} - {{ card.rarity }}">
+            {% else %}
+                <p>No Image</p>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ card.character.name }} - {{ card.rarity }}</h5>
+                <p class="card-text">{{ card.stats|truncatewords:15 }}</p>
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'card_update' card.pk %}" class="btn btn-warning btn-sm">Обновить</a>
+                    <form method="post" action="{% url 'card_delete' card.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">Нет доступных карточек.</p>
+    {% endfor %}
+</div>
+{% endblock %}

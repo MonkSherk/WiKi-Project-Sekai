@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     {% load bootstrap5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+    <title>Проверка</title>
+</head>
+<body>
+<h2 class="text-center">Введите кодовое слово для доступа</h2>
+<form method="post" class="text-center">
+    {% csrf_token %}
+    <div class="form-group mb-3">
+        <input type="password" name="access_code" class="form-control w-50 mx-auto" placeholder="Кодовое слово" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Проверить</button>
+</form>
+</body>
+</html>

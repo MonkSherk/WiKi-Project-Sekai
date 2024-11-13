@@ -1,0 +1,185 @@
+{% extends 'sekai_app/base.html' %}
+{% load static %}
+{% load slicer %}
+
+{% block title %}Project SEKAI Wiki - {{ card.character.name }} Card{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card bg-dark text-white shadow border-0 rounded-3 mb-4">
+        {% if card.image_url %}
+          <img src="{{ card.image_url.url }}" class="card-img-top rounded-top-3 main-card-image" alt="{{ card.character.name }} Card">
+        {% else %}
+            <p>No Image</p>
+        {% endif %}
+        <div class="card-body">
+          <h1 class="card-title text-primary fw-bold">{{ card.character.name }} - {{ card.rarity }} Card</h1>
+          <p class="card-text"><strong>Персонаж:</strong> <a href="{% url 'character_detail' card.character.pk %}" class="text-info">{{ card.character.name }}</a></p>
+          <p class="card-text"><strong>Описание:</strong> {{ card.stats }}</p>
+          <p class="card-text"><strong>Редкость:</strong> {{ card.rarity }}</p>
+          {% if card.is_limited %}
+            <span class="badge bg-danger">Лимитированная</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="character-cards-container p-3 rounded-3 shadow-lg mb-4">
+        <h3 class="text-primary">Другие карточки {{ card.character.name }}</h3>
+        {% with other_cards=card.character.cards.all %}
+          {% if other_cards|length > 1 %}
+            <div id="otherCardsCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                {% for slice in other_cards|slice_list:3 %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row">
+                      {% for other_card in slice %}
+                        {% if other_card.pk != card.pk %}
+                          <div class="col-md-4">
+                            <div class="card bg-dark text-white border-0 shadow-lg rounded-3 mb-4">
+                              <a href="{% url 'card_detail' other_card.pk %}" class="text-decoration-none">
+                                {% if other_card.image_url %}
+                                  <img src="{{ other_card.image_url.url }}" class="card-img-top rounded-top-3 other-card-image" alt="{{ other_card.character.name }} Card">
+                                {% else %}
+                                    <p>No Image</p>
+                                {% endif %}
+                                <div class="card-body">
+                                  <h5 class="card-title text-info">{{ other_card.rarity }} - {{ other_card.character.name }}</h5>
+                                  {% if other_card.stats %}
+                                    <p class="card-text">{{ other_card.stats|truncatewords:20 }}</p>
+                                  {% endif %}
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#otherCardsCarousel" data-bs-slide="prev" aria-label="Предыдущий">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                <span class="visually-hidden">Предыдущий</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#otherCardsCarousel" data-bs-slide="next" aria-label="Следующий">
+                <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                <span class="visually-hidden">Следующий</span>
+              </button>
+            </div>
+          {% else %}
+            <p class="text-muted">Нет других карточек персонажа.</p>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="character-container p-3 rounded-3 shadow-lg">
+        <h3 class="text-primary">Персонаж</h3>
+        <div class="card bg-dark text-white border-0 shadow-lg rounded-3 mb-4">
+          <a href="{% url 'character_detail' card.character.pk %}" class="text-decoration-none">
+            {% if card.character.image %}
+              <img src="{{ card.character.image.url }}" class="card-img-top rounded-top-3 character-image" alt="{{ card.character.name }}">
+            {% else %}
+                <p>No Image</p>
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title text-info">{{ card.character.name }}</h5>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .main-card-image {
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .character-image,
+  .other-card-image {
+    height: 250px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .character-cards-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .character-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .card {
+    border: 2px solid #0d6efd;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    z-index: 1;
+    background-color: #ffffff;
+  }
+  .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
+    border-color: #0d6efd;
+  }
+
+  #otherCardsCarousel .carousel-item .row {
+    display: flex;
+    justify-content: center;
+  }
+
+  #otherCardsCarousel .card {
+    background-color: #333;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  #otherCardsCarousel .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+
+  #otherCardsCarousel .card-body {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-size: 30px 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 10px;
+  }
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 5%;
+  }
+
+  @media (max-width: 767.98px) {
+    .character-cards-container,
+    .character-container {
+      padding: 15px;
+    }
+    .main-card-image {
+      height: 300px;
+    }
+    .other-card-image,
+    .character-image {
+      height: 200px;
+    }
+  }
+</style>
+{% endblock %}
