@@ -124,7 +124,6 @@ class CharacterListView(ListView):
         return context
 
 
-# views.py
 
 class CharacterDetailView(DetailView):
     model = Character
@@ -301,8 +300,8 @@ def group_update(request, pk):
 @admin_token_required
 def group_delete(request, pk):
     return delete_object(request, Group, pk, 'group_list')
-@admin_token_required
 # CRUD для Character
+@admin_token_required
 def character_create(request):
     if request.method == 'POST':
         form = CharacterForm(request.POST, request.FILES)
